@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programa de Seguros · Colegio Italo Venezolano Angelo de Marta</title>
+<style>
+  :root{
+    --verde:#0a6b4d; --verde-osc:#07402e; --verde-suave:#e3f0ea;
+    --rojo:#c8102e; --dorado:#b9862a; --tinta:#20261f; --gris:#5c665f;
+    --linea:#e2e0d8; --papel:#f6f5f0; --blanco:#ffffff;
+    --sombra:0 8px 24px rgba(7,64,46,.10); --radio:16px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:"Segoe UI",Helvetica,Arial,sans-serif;background:var(--papel);color:var(--tinta);line-height:1.55;-webkit-font-smoothing:antialiased}
+  button{font:inherit;cursor:pointer}
+  .contenedor{max-width:1120px;margin:0 auto;padding:0 24px}
+
+  /* ---------- HERO ---------- */
+  .hero{background:linear-gradient(135deg,var(--verde-osc) 0%,var(--verde) 78%);color:#fff;padding:56px 0 44px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-90px;top:-90px;width:340px;height:340px;border-radius:50%;background:rgba(255,255,255,.06)}
+  .hero::before{content:"";position:absolute;right:120px;bottom:-140px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.05)}
+  .hero .contenedor{position:relative;z-index:2}
+  .etiqueta{display:inline-block;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;font-weight:600;color:#ffe9b8;border:1px solid rgba(255,233,184,.45);border-radius:999px;padding:6px 14px;margin-bottom:18px}
+  .hero h1{font-size:clamp(30px,4.6vw,48px);line-height:1.12;font-weight:700;max-width:820px}
+  .hero p.sub{margin-top:14px;font-size:17px;max-width:720px;color:#dff0e8}
+  .stats{display:flex;flex-wrap:wrap;gap:14px;margin-top:32px}
+  .stat{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:14px 22px;min-width:170px}
+  .stat b{display:block;font-size:28px;font-weight:700;font-variant-numeric:tabular-nums}
+  .stat span{font-size:13px;color:#cfe8dc}
+  .hero-meta{margin-top:26px;font-size:13px;color:#bfe0d1;display:flex;flex-wrap:wrap;gap:8px 22px}
+
+  /* ---------- NAV ---------- */
+  nav.tabs{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--linea)}
+  nav.tabs .contenedor{display:flex;align-items:center;gap:4px;overflow-x:auto}
+  .tab-btn{border:none;background:none;padding:16px 18px;font-size:15px;font-weight:600;color:var(--gris);border-bottom:3px solid transparent;white-space:nowrap;transition:color .18s,border-color .18s}
+  .tab-btn:hover{color:var(--tinta)}
+  .tab-btn.activo{color:var(--verde);border-bottom-color:var(--verde)}
+  .btn-imprimir{margin-left:auto;border:1px solid var(--verde);color:var(--verde);background:#fff;border-radius:999px;padding:8px 18px;font-size:13px;font-weight:600;white-space:nowrap;transition:all .18s}
+  .btn-imprimir:hover{background:var(--verde);color:#fff}
+
+  /* ---------- SECCIONES ---------- */
+  section.poliza{padding:56px 0 8px}
+  .encabezado-seccion{display:flex;align-items:flex-start;gap:18px;margin-bottom:28px}
+  .numero-pastilla{flex:none;width:52px;height:52px;border-radius:14px;background:var(--verde);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700}
+  .encabezado-seccion h2{font-size:27px;font-weight:700}
+  .encabezado-seccion .para{font-size:14px;color:var(--gris);margin-top:4px;max-width:760px}
+  .tagline{display:inline-block;margin-top:8px;font-size:12.5px;font-weight:600;color:var(--verde);background:var(--verde-suave);border-radius:999px;padding:4px 12px}
+
+  .panel{background:var(--blanco);border:1px solid var(--linea);border-radius:var(--radio);box-shadow:var(--sombra);padding:28px;margin-bottom:24px}
+  .panel h3{font-size:17px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+  .panel h3 .punto{width:9px;height:9px;border-radius:50%;background:var(--dorado);flex:none}
+  .panel p.nota{font-size:13px;color:var(--gris);margin-top:12px}
+
+  /* Tarjetas de datos clave */
+  .fila-datos{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+  .dato{background:var(--papel);border:1px solid var(--linea);border-radius:12px;padding:14px 16px}
+  .dato span{display:block;font-size:12px;color:var(--gris);text-transform:uppercase;letter-spacing:.6px}
+  .dato b{font-size:20px;font-weight:700;color:var(--verde-osc);font-variant-numeric:tabular-nums}
+
+  /* Toggle alternativas */
+  .alternador{display:inline-flex;background:var(--papel);border:1px solid var(--linea);border-radius:999px;padding:4px;gap:4px;margin-bottom:20px}
+  .alternador button{border:none;background:transparent;border-radius:999px;padding:9px 22px;font-size:14px;font-weight:600;color:var(--gris);transition:all .18s}
+  .alternador button.activo{background:var(--verde);color:#fff;box-shadow:0 2px 8px rgba(7,64,46,.25)}
+
+  /* Grilla de coberturas */
+  .grilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+  .cobertura{border:1px solid var(--linea);border-radius:12px;padding:16px;background:#fff;transition:transform .18s,box-shadow .18s}
+  .cobertura:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(7,64,46,.12)}
+  .cobertura .nombre{font-size:13.5px;font-weight:600;min-height:38px}
+  .cobertura .monto{font-size:22px;font-weight:700;color:var(--verde-osc);margin-top:6px;font-variant-numeric:tabular-nums}
+  .cobertura .monto small{font-size:12px;font-weight:600;color:var(--gris)}
+  .cobertura.incluida{background:var(--verde-suave);border-color:#bcd9cb}
+  .cobertura.incluida .monto{color:var(--verde);font-size:16px;letter-spacing:.5px}
+  .sin-costo .monto{color:var(--dorado)}
+
+  /* Visibilidad alternativa escolar */
+  #escolar .v2{display:none}
+  #escolar.alt2 .v1{display:none}
+  #escolar.alt2 .v2{display:inline}
+
+  /* Tablas */
+  table{width:100%;border-collapse:collapse;font-size:14.5px}
+  thead th{background:var(--verde-osc);color:#fff;text-align:left;padding:11px 14px;font-size:12.5px;text-transform:uppercase;letter-spacing:.7px}
+  thead th.num,td.num{text-align:right}
+  tbody td{padding:11px 14px;border-bottom:1px solid var(--linea);vertical-align:top}
+  tbody tr:hover{background:#f2f7f4}
+  tbody tr:last-child td{border-bottom:none}
+  td.beneficio{font-weight:600}
+  td.detalle{color:var(--gris);font-size:13.5px}
+  .tabla-envoltura{overflow-x:auto;border:1px solid var(--linea);border-radius:12px}
+  .tabla-envoltura table{border-radius:12px;overflow:hidden}
+
+  /* Servicios incluidos */
+  .servicios{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+  .servicio{border-left:4px solid var(--dorado);background:var(--papel);border-radius:10px;padding:16px 18px}
+  .servicio b{font-size:15px}
+  .servicio p{font-size:13.5px;color:var(--gris);margin-top:6px}
+
+  /* Panel de costo */
+  .panel-costo{background:linear-gradient(135deg,var(--verde-osc),var(--verde));color:#fff;border:none}
+  .panel-costo h3{color:#fff}
+  .panel-costo h3 .punto{background:#ffe9b8}
+  .costo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+  .costo{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.20);border-radius:12px;padding:16px}
+  .costo span{font-size:12px;color:#cfe8dc;display:block;text-transform:uppercase;letter-spacing:.6px}
+  .costo b{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+  .costo.destaque{background:rgba(255,233,184,.16);border-color:rgba(255,233,184,.55)}
+  .costo.destaque b{color:#ffe9b8}
+  .costo small{font-size:12px;color:#cfe8dc}
+
+  /* Resumen */
+  .tarjeta-resumen{border:1px solid var(--linea);border-radius:14px;padding:20px;background:#fff;display:flex;flex-direction:column;gap:6px}
+  .tarjeta-resumen .arriba{display:flex;justify-content:space-between;align-items:baseline}
+  .tarjeta-resumen b{font-size:19px;color:var(--verde-osc);font-variant-numeric:tabular-nums}
+  .tarjeta-resumen .lbl{font-size:14px;font-weight:600}
+  .barra{height:10px;border-radius:999px;background:var(--papel);border:1px solid var(--linea);overflow:hidden;margin-top:6px}
+  .barra i{display:block;height:100%;border-radius:999px;transition:width 1s ease}
+  .total-gran{margin-top:18px;text-align:center;background:var(--verde-osc);color:#fff;border-radius:14px;padding:22px}
+  .total-gran span{font-size:13px;color:#cfe8dc;text-transform:uppercase;letter-spacing:1px}
+  .total-gran b{display:block;font-size:38px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
+
+  /* Footer */
+  footer{margin-top:64px;background:var(--verde-osc);color:#cfe8dc;padding:34px 0;font-size:13px}
+  footer b{color:#fff}
+  footer .contenedor{display:flex;flex-wrap:wrap;gap:12px 40px;justify-content:space-between}
+
+  @media (max-width:640px){
+    .panel{padding:20px}
+    .hero{padding:40px 0 34px}
+    .tab-btn{padding:14px 12px;font-size:13.5px}
+  }
+  @media print{
+    nav.tabs,.btn-imprimir,.alternador{display:none}
+    section.poliza{padding:24px 0;page-break-inside:avoid}
+    body{background:#fff}
+    .panel{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== PORTADA ===================== -->
+<header class="hero">
+  <div class="contenedor">
+    <span class="etiqueta">Presentación a la directiva · Octubre 2026</span>
+    <h1>Programa integral de seguros<br>Unidad Educativa Colegio Italo Venezolano Angelo de Marta</h1>
+    <p class="sub">Tres pólizas diseñadas para proteger a toda la comunidad educativa: los 720 alumnos en su vida escolar y cotidiana, y los 98 trabajadores de la institución, con respaldo de Seguros Caracas, C.A.</p>
+    <div class="stats">
+      <div class="stat"><b data-contar="3">0</b><span>pólizas complementarias</span></div>
+      <div class="stat"><b data-contar="720">0</b><span>alumnos protegidos · 24 horas</span></div>
+      <div class="stat"><b data-contar="98">0</b><span>trabajadores amparados</span></div>
+      <div class="stat"><b>US$ <span data-contar="19016">0</span></b><span>inversión anual total · Alternativa 1</span></div>
+    </div>
+    <div class="hero-meta">
+      <span><b>Aseguradora:</b> Seguros Caracas, C.A. — más de 80 años de trayectoria</span>
+      <span><b>Corredor:</b> José Fernando Camino · Código 11237</span>
+      <span><b>RIF:</b> J-80048725</span>
+      <span><b>Sucursal:</b> Lechería · Vigencia 12 meses</span>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== NAVEGACIÓN ===================== -->
+<nav class="tabs">
+  <div class="contenedor">
+    <button class="tab-btn activo" data-tab="escolar">1 · Póliza escolar</button>
+    <button class="tab-btn" data-tab="patronal">2 · Responsabilidad patronal</button>
+    <button class="tab-btn" data-tab="empresarial">3 · Responsabilidad empresarial</button>
+    <button class="tab-btn" data-tab="resumen">Resumen de inversión</button>
+    <button class="btn-imprimir" onclick="window.print()">Imprimir / PDF</button>
+  </div>
+</nav>
+
+<!-- ===================== PÓLIZA 1: ESCOLAR ===================== -->
+<section class="poliza" id="escolar">
+  <div class="contenedor">
+    <div class="encabezado-seccion">
+      <div class="numero-pastilla">1</div>
+      <div>
+        <h2>Seguro colectivo de accidentes personales escolares</h2>
+        <p class="para">Protección de <b>24 horas al día</b> para todos los alumnos: dentro y fuera del colegio, los 365 días del año. Indemniza a los padres o representante legal por muerte, invalidez y gastos médicos a consecuencia de accidentes o enfermedades cubiertas.</p>
+        <span class="tagline">Cotización Nº 211724 · Para 720 alumnos · Pago anual anticipado</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3><span class="punto"></span>Datos del plan</h3>
+      <div class="fila-datos">
+        <div class="dato"><span>Personas a asegurar</span><b>720 alumnos</b></div>
+        <div class="dato"><span>Modalidad</span><b>24 horas</b></div>
+        <div class="dato"><span>Edad de contratación</span><b>Desde 6 meses</b></div>
+        <div class="dato"><span>Permanencia hasta</span><b>21 años</b></div>
+        <div class="dato"><span>Límite catastrófico</span><b>10% de la cartera</b></div>
+      </div>
+      <p class="nota">Se requiere la suscripción del 100% de los asegurados elegibles. Vigencia anual. Fraccionamiento disponible sin recargo: semestral (primas &gt; US$ 5.000), cuatrimestral (&gt; US$ 7.000) y trimestral (&gt; US$ 9.000).</p>
+    </div>
+
+    <div class="panel">
+      <h3><span class="punto"></span>Coberturas y sumas aseguradas</h3>
+      <div class="alternador" role="tablist" aria-label="Alternativas de plan">
+        <button class="activo" data-alt="1">Alternativa 1 · US$ 20,00/alumno</button>
+        <button data-alt="2">Alternativa 2 · US$ 25,00/alumno</button>
+      </div>
+      <div class="grilla">
+        <div class="cobertura">
+          <div class="nombre">Muerte por accidente o enfermedad cubierta</div>
+          <div class="monto"><span class="v1">US$ 1.500</span><span class="v2">US$ 2.000</span></div>
+        </div>
+        <div class="cobertura">
+          <div class="nombre">Invalidez permanente (según tabla de indemnización)</div>
+          <div class="monto"><span class="v1">US$ 1.500</span><span class="v2">US$ 2.000</span></div>
+        </div>
+        <div class="cobertura">
+          <div class="nombre">Gastos médicos por causa accidental (incluye lentes, anteojos y aparatos ortopédicos)</div>
+          <div class="monto">US$ 1.000</div>
+        </div>
+        <div class="cobertura sin-costo">
+          <div class="nombre">Poliomielitis · sin costo adicional</div>
+          <div class="monto"><span class="v1">US$ 450</span><span class="v2">US$ 600</span></div>
+        </div>
+        <div class="cobertura sin-costo">
+          <div class="nombre">Tuberculosis · sin costo adicional</div>
+          <div class="monto"><span class="v1">US$ 450</span><span class="v2">US$ 600</span></div>
+        </div>
+        <div class="cobertura">
+          <div class="nombre">Responsabilidad civil · daños a personas</div>
+          <div class="monto"><span class="v1">US$ 800</span><span class="v2">US$ 1.000</span></div>
+        </div>
+        <div class="cobertura">
+          <div class="nombre">Responsabilidad civil · daños a propiedades</div>
+          <div class="monto"><span class="v1">US$ 800</span><span class="v2">US$ 1.000</span></div>
+        </div>
+        <div class="cobertura">
+          <div class="nombre">Responsabilidad civil · contractual (ampara también a la institución contratante)</div>
+          <div class="monto"><span class="v1">US$ 800</span><span class="v2">US$ 1.000</span></div>
+        </div>
+        <div class="cobertura">
+          <div class="nombre">Gastos médicos por enfermedad (apendicectomía, amigdalectomía, adenoidectomía)</div>
+          <div class="monto"><span class="v1">US$ 800</span><span class="v2">US$ 1.000</span></div>
+        </div>
+        <div class="cobertura">
+          <div class="nombre">Gastos de entierro (remanente pagado por reembolso)</div>
+          <div class="monto"><span class="v1">US$ 800</span><span class="v2">US$ 1.000</span></div>
+        </div>
+        <div class="cobertura">
+          <div class="nombre">Reembolso de mensualidad por causa accidental</div>
+          <div class="monto">US$ 300</div>
+        </div>
+        <div class="cobertura incluida">
+          <div class="nombre">Atención médica in situ Plus Escolar (AMIS)</div>
+          <div class="monto">INCLUIDO</div>
+        </div>
+        <div class="cobertura incluida">
+          <div class="nombre">Servicio UrgentCare · salas de urgencias sin afectación de siniestralidad</div>
+          <div class="monto">INCLUIDO</div>
+        </div>
+      </div>
+      <p class="nota">Las coberturas de muerte e invalidez responden si el evento sobreviene dentro de un (1) año de ocurrido el accidente o diagnosticada la enfermedad. Las indemnizaciones en Venezuela se pagan en bolívares a la tasa acordada a la fecha del siniestro; los gastos médicos por accidente en el exterior se pagan vía reembolso.</p>
+    </div>
+
+    <div class="panel">
+      <h3><span class="punto"></span>Servicios incluidos sin costo adicional</h3>
+      <div class="servicios">
+        <div class="servicio">
+          <b>Atención médica in situ Plus Escolar (AMIS)</b>
+          <p>Atención médica de primeros auxilios dentro de los predios del colegio, medicinas esenciales y material crítico de emergencia disponible por 72 horas, traslado en ambulancia y acompañamiento del caso.</p>
+        </div>
+        <div class="servicio">
+          <b>Servicio UrgentCare</b>
+          <p>Acceso a salas de urgencias y red aliada, sin afectar la siniestralidad de la póliza, para caídas, heridas que requieran sutura, contusiones, quemaduras, lesiones agudas por accidentes y reacciones alérgicas por picaduras.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-costo">
+      <h3><span class="punto"></span>Inversión anual · póliza escolar</h3>
+      <div class="costo-grid">
+        <div class="costo"><span>Prima neta anual</span><b><span class="v1">US$ 14.317,00</span><span class="v2">US$ 18.117,00</span></b></div>
+        <div class="costo"><span>IGTF 3%</span><b><span class="v1">US$ 429,51</span><span class="v2">US$ 543,51</span></b></div>
+        <div class="costo destaque"><span>Total anual</span><b><span class="v1">US$ 14.746,51</span><span class="v2">US$ 18.660,51</span></b></div>
+        <div class="costo"><span>Costo por alumno (con IGTF)</span><b><span class="v1">US$ 20,48</span><span class="v2">US$ 25,92</span></b><small>Prima anual por grupo, 720 alumnos</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PÓLIZA 2: RESPONSABILIDAD PATRONAL ===================== -->
+<section class="poliza" id="patronal">
+  <div class="contenedor">
+    <div class="encabezado-seccion">
+      <div class="numero-pastilla">2</div>
+      <div>
+        <h2>Responsabilidad patronal</h2>
+        <p class="para">Ampara las <b>prestaciones dinerarias</b> que la ley obliga al colegio a pagar a sus trabajadores —o sus derechohabientes— por accidentes de trabajo y enfermedades ocupacionales. Es la protección salarial básica de la nómina.</p>
+        <span class="tagline">Cotización Nº 13055885 · 98 trabajadores · Nómina anual US$ 352.800</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3><span class="punto"></span>Cobertura básica · prestaciones dinerarias</h3>
+      <div class="tabla-envoltura">
+        <table>
+          <thead>
+            <tr><th>Evento</th><th>Prestación</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="beneficio">Muerte del trabajador</td><td class="detalle">3 años de salario, sin exceder 50 salarios mínimos</td></tr>
+            <tr><td class="beneficio">Gran discapacidad</td><td class="detalle">3 años de salario, sin exceder 50 salarios mínimos</td></tr>
+            <tr><td class="beneficio">Invalidez absoluta y permanente para el trabajo</td><td class="detalle">2 años de salario, sin exceder 50 salarios mínimos</td></tr>
+            <tr><td class="beneficio">Invalidez temporal para el trabajo</td><td class="detalle">Salario por los días de incapacidad, hasta 1 año, prorrogable 1 año adicional según médico tratante</td></tr>
+            <tr><td class="beneficio">Invalidez parcial y permanente</td><td class="detalle">Hasta 1 año de salario, sin exceder 30 salarios mínimos</td></tr>
+            <tr><td class="beneficio">Gastos de entierro</td><td class="detalle">Hasta 15 salarios mínimos</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="nota">Base de cálculo: salario normal del día del siniestro; cuando se indica salario mínimo, se toma el vigente a la fecha del siniestro.</p>
+    </div>
+
+    <div class="panel">
+      <h3><span class="punto"></span>Coberturas opcionales contratadas</h3>
+      <div class="tabla-envoltura">
+        <table>
+          <thead>
+            <tr><th>Cobertura</th><th class="num">Suma asegurada</th><th class="num">Prima anual</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="beneficio">Gastos por asistencia médica, quirúrgica y farmacéutica</td><td class="num">US$ 5.000</td><td class="num">US$ 849,62</td></tr>
+            <tr><td class="beneficio">Atención médica in situ</td><td class="num">Incluida</td><td class="num">US$ 882,00</td></tr>
+            <tr><td class="beneficio">Entrega de medicamentos · enfermedades agudas</td><td class="num">Incluida</td><td class="num">US$ 490,00</td></tr>
+            <tr><td class="beneficio">Hernias para tejidos blandos</td><td class="num">US$ 5.000</td><td class="num">US$ 393,79</td></tr>
+            <tr><td class="beneficio">Hernias discales</td><td class="num">US$ 9.000</td><td class="num">US$ 277,09</td></tr>
+            <tr><td class="beneficio">Exceso de gastos de asistencia médica, quirúrgica y farmacéutica</td><td class="num">US$ 10.000</td><td class="num">US$ 92,63</td></tr>
+            <tr><td class="beneficio">Exceso de gastos por rehabilitación</td><td class="num">US$ 10.000</td><td class="num">US$ 40,82</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="nota">Los gastos médicos pueden atenderse por reembolso, carta aval o Caracas Asistencia (esta última para emergencias ocurridas en los predios del colegio).</p>
+    </div>
+
+    <div class="panel panel-costo">
+      <h3><span class="punto"></span>Inversión anual · responsabilidad patronal</h3>
+      <div class="costo-grid">
+        <div class="costo"><span>Cobertura básica</span><b>US$ 757,16</b></div>
+        <div class="costo"><span>Coberturas opcionales</span><b>US$ 3.025,95</b></div>
+        <div class="costo"><span>IGTF 3%</span><b>US$ 113,49</b></div>
+        <div class="costo destaque"><span>Total anual</span><b>US$ 3.896,60</b><small>Equivalente a US$ 39,76 por trabajador/año</small></div>
+      </div>
+      <div class="fila-datos" style="margin-top:14px">
+        <div class="costo"><span>Límite por trabajador / año póliza</span><b>US$ 50.000</b></div>
+        <div class="costo"><span>Límite por 2 o más trabajadores / año póliza</span><b>US$ 300.000</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PÓLIZA 3: RESPONSABILIDAD EMPRESARIAL ===================== -->
+<section class="poliza" id="empresarial">
+  <div class="contenedor">
+    <div class="encabezado-seccion">
+      <div class="numero-pastilla">3</div>
+      <div>
+        <h2>Responsabilidad empresarial · LOPCYMAT</h2>
+        <p class="para">Protege el <b>patrimonio del colegio</b> cubriendo las indemnizaciones derivadas del artículo 130 de la Ley Orgánica de Prevención, Condiciones y Medio Ambiente de Trabajo, a las que el colegio estaría obligado ante el incumplimiento de las normas de seguridad y salud laboral.</p>
+        <span class="tagline">Cotización Nº 13055888 · 98 trabajadores · Nómina anual US$ 352.800</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3><span class="punto"></span>Cobertura básica · obligaciones del artículo 130 de la LOPCYMAT</h3>
+      <div class="tabla-envoltura">
+        <table>
+          <thead>
+            <tr><th>Evento</th><th>Indemnización</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="beneficio">Muerte del trabajador</td><td class="detalle">Entre 5 y 8 años de salario integral</td></tr>
+            <tr><td class="beneficio">Discapacidad absoluta permanente para cualquier trabajo</td><td class="detalle">Entre 4 y 7 años de salario integral</td></tr>
+            <tr><td class="beneficio">Discapacidad total permanente para el trabajo habitual</td><td class="detalle">Entre 3 y 6 años de salario integral</td></tr>
+            <tr><td class="beneficio">Discapacidad parcial permanente mayor al 25%</td><td class="detalle">Entre 2 y 5 años de salario integral</td></tr>
+            <tr><td class="beneficio">Discapacidad parcial permanente de hasta el 25%</td><td class="detalle">Entre 1 y 4 años de salario integral</td></tr>
+            <tr><td class="beneficio">Discapacidad temporal</td><td class="detalle">Doble del salario de los días que dure la discapacidad</td></tr>
+            <tr><td class="beneficio">Gran discapacidad asociada a discapacidad absoluta permanente</td><td class="detalle">Indemnización equiparable a la de muerte</td></tr>
+            <tr><td class="beneficio">Gran discapacidad asociada a discapacidad temporal</td><td class="detalle">Triple del salario integral de los días de discapacidad</td></tr>
+            <tr><td class="beneficio">Secuelas o deformaciones permanentes</td><td class="detalle">5 años de salario integral</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3><span class="punto"></span>Coberturas opcionales contratadas</h3>
+      <div class="tabla-envoltura">
+        <table>
+          <thead>
+            <tr><th>Cobertura</th><th class="num">Límite por trabajador y evento</th><th class="num">Prima anual</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="beneficio">Responsabilidad del empleador por negligencia</td><td class="num">US$ 20.000</td><td class="num">US$ 155,72</td></tr>
+            <tr><td class="beneficio">Asistencia legal y defensa penal</td><td class="num">US$ 20.000</td><td class="num">US$ 77,86</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="nota">Disponible adicionalmente (no contratada en esta cotización): gastos médico-quirúrgicos, hospitalarios y farmacéuticos. Póliza emitible en modalidad nominativa (con ajuste anual por nómina real) o declarativa (nómina detallada, con aviso de inclusiones/exclusiones en 15 días).</p>
+    </div>
+
+    <div class="panel panel-costo">
+      <h3><span class="punto"></span>Inversión anual · responsabilidad empresarial</h3>
+      <div class="costo-grid">
+        <div class="costo"><span>Cobertura básica</span><b>US$ 128,88</b></div>
+        <div class="costo"><span>Coberturas opcionales</span><b>US$ 233,58</b></div>
+        <div class="costo"><span>IGTF 3%</span><b>US$ 10,87</b></div>
+        <div class="costo destaque"><span>Total anual</span><b>US$ 373,33</b><small>Equivalente a US$ 3,81 por trabajador/año</small></div>
+      </div>
+      <div class="fila-datos" style="margin-top:14px">
+        <div class="costo"><span>Límite total por trabajador (todas las coberturas)</span><b>US$ 28.800</b></div>
+        <div class="costo"><span>Límite por 2 o más trabajadores / año póliza</span><b>US$ 144.000</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RESUMEN ===================== -->
+<section class="poliza" id="resumen">
+  <div class="contenedor">
+    <div class="encabezado-seccion">
+      <div class="numero-pastilla">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>
+      </div>
+      <div>
+        <h2>Resumen de la inversión anual</h2>
+        <p class="para">Las tres pólizas se complementan: la escolar protege a los alumnos, la patronal cubre las prestaciones legales a los trabajadores y la empresarial resguarda el patrimonio del colegio frente a indemnizaciones laborales.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3><span class="punto"></span>Distribución del costo (Alternativa 1 escolar)</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px" id="barras">
+        <div class="tarjeta-resumen">
+          <div class="arriba"><span class="lbl">Póliza escolar · Alt. 1 (720 alumnos)</span><b>US$ 14.746,51</b></div>
+          <div class="barra"><i style="width:0%;background:var(--verde)" data-w="77.5"></i></div>
+        </div>
+        <div class="tarjeta-resumen">
+          <div class="arriba"><span class="lbl">Responsabilidad patronal (98 trabajadores)</span><b>US$ 3.896,60</b></div>
+          <div class="barra"><i style="width:0%;background:var(--dorado)" data-w="20.5"></i></div>
+        </div>
+        <div class="tarjeta-resumen">
+          <div class="arriba"><span class="lbl">Responsabilidad empresarial (98 trabajadores)</span><b>US$ 373,33</b></div>
+          <div class="barra"><i style="width:0%;background:var(--rojo)" data-w="2.0"></i></div>
+        </div>
+      </div>
+      <div class="total-gran">
+        <span>Inversión anual total del programa · Alternativa 1</span>
+        <b>US$ 19.016,44</b>
+        <span style="text-transform:none;letter-spacing:0">Con la Alternativa 2 del seguro escolar: <b style="display:inline;font-size:15px">US$ 22.930,44</b></span>
+      </div>
+      <p class="nota">Todos los montos incluyen IGTF 3% (aplicable si el pago se realiza en moneda distinta a la de curso legal, según Providencia SNAT/2022/000013). Los valores están expresados en dólares estadounidenses.</p>
+    </div>
+
+    <div class="panel">
+      <h3><span class="punto"></span>Beneficios clave para el colegio</h3>
+      <div class="servicios" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+        <div class="servicio"><b>Cumplimiento legal</b><p>Cubre las prestaciones laborales exigidas por ley y las indemnizaciones LOPCYMAT, evitando desembolsos patrimoniales imprevistos.</p></div>
+        <div class="servicio"><b>Comunidad protegida 24/7</b><p>Alumnos cubiertos dentro y fuera de la institución, con atención médica in situ y red de urgencias sin afectación de siniestralidad.</p></div>
+        <div class="servicio"><b>Servicios sin costo</b><p>AMIS Plus Escolar, UrgentCare, atención médica in situ y entrega de medicamentos para la nómina, sin prima adicional.</p></div>
+        <div class="servicio"><b>Valor por trabajador</b><p>Toda la protección laboral del colegio por menos de US$ 44 por trabajador al año (patronal + empresarial).</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="contenedor">
+    <div><b>Seguros Caracas, C.A.</b><br>Más de 80 años asegurando a la familia venezolana<br>Contacto: Rodolfo Márquez · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="32405d565d5e545d1c5f5340434757487241575547405d41515340535153411c515d5f">[email&#160;protected]</a> · (0281) 4207105</div>
+    <div><b>Corredor de seguros</b><br>José Fernando Camino · V-103054725 · Código 11237<br>Unidad Educativa Colegio Italo Venezolano Angelo de Marta · RIF J-80048725</div>
+    <div><b>Cotizaciones</b><br>Nº 211724 (escolar, 30/09/2026) · Nº 13055885 (patronal, 28/09/2026)<br>Nº 13055888 (empresarial, 28/09/2026) · Validez: 15 días</div>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Navegación por pestañas con desplazamiento suave
+  const botones = document.querySelectorAll('.tab-btn');
+  botones.forEach(btn => {
+    btn.addEventListener('click', () => {
+      botones.forEach(b => b.classList.remove('activo'));
+      btn.classList.add('activo');
+      const destino = document.getElementById(btn.dataset.tab);
+      if (destino) destino.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+
+  // Marcar pestaña activa según el scroll
+  const secciones = ['escolar','patronal','empresarial','resumen'];
+  window.addEventListener('scroll', () => {
+    let actual = 'escolar';
+    secciones.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top <= 120) actual = id;
+    });
+    botones.forEach(b => b.classList.toggle('activo', b.dataset.tab === actual));
+  }, {passive:true});
+
+  // Alternador de alternativas del seguro escolar
+  const seccionEscolar = document.getElementById('escolar');
+  document.querySelectorAll('.alternador button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.alternador button').forEach(x => x.classList.remove('activo'));
+      b.classList.add('activo');
+      seccionEscolar.classList.toggle('alt2', b.dataset.alt === '2');
+    });
+  });
+
+  // Contadores animados del hero
+  function animarContadores(){
+    document.querySelectorAll('[data-contar]').forEach(el => {
+      const fin = parseInt(el.dataset.contar, 10);
+      const inicio = performance.now(), dur = 1200;
+      function paso(t){
+        const p = Math.min((t - inicio) / dur, 1);
+        const e = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(fin * e).toLocaleString('es-VE');
+        if (p < 1) requestAnimationFrame(paso);
+      }
+      requestAnimationFrame(paso);
+    });
+  }
+  animarContadores();
+
+  // Barras del resumen
+  const obs = new IntersectionObserver(entradas => {
+    entradas.forEach(en => {
+      if (en.isIntersecting) {
+        en.target.querySelectorAll('i[data-w]').forEach(i => { i.style.width = i.dataset.w + '%'; });
+        obs.unobserve(en.target);
+      }
+    });
+  }, {threshold:.4});
+  const barras = document.getElementById('barras');
+  if (barras) obs.observe(barras);
+</script>
+</body>
+</html>
